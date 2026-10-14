@@ -20,10 +20,7 @@ REQUEST_ONLY_DROP = {"accept-encoding"}
 app = FastAPI(title="curl-bridge")
 
 
-@app.api_route(
-    "/fetch",
-    methods=["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
-)
+@app.get("/fetch")
 async def fetch(
     request: Request,
     url: str = Query(..., description="Target URL to request"),
@@ -38,15 +35,13 @@ async def fetch(
         for k, v in request.headers.items()
         if k.lower() not in HOP_BY_HOP | REQUEST_ONLY_DROP
     }
-    body = await request.body()
 
     try:
         async with AsyncSession(impersonate=impersonate) as session:
             upstream = await session.request(
-                request.method,
+                "GET",
                 url,
                 headers=headers,
-                data=body or None,
                 timeout=TIMEOUT,
                 allow_redirects=False,
             )

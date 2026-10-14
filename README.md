@@ -7,9 +7,8 @@ and returns the upstream response as-is (status, headers, body).
     uvicorn app.main:app --port 8000
 
     curl "localhost:8000/fetch?url=https://example.com"
-    curl -X POST "localhost:8000/fetch?url=https://httpbin.org/post" -d 'a=1'
 
-- Any method (GET/POST/PUT/PATCH/DELETE/HEAD/OPTIONS); method, headers and body are forwarded.
+- GET only; client headers are forwarded. URL-encode the `url` value if it has its own query string (`curl -G --data-urlencode "url=..."`).
 - `impersonate` query param (default `chrome`, or env `IMPERSONATE`) picks the browser profile.
 - `REQUEST_TIMEOUT` env sets the upstream timeout (default 30s). Redirects are passed through, not followed.
 - Upstream connection errors return `502`; invalid URLs return `400`.

@@ -33,12 +33,11 @@ def test_proxies_response():
             pass
 
         async def request(self, method, url, **kw):
-            assert method == "POST" and url == "https://example.com/x"
-            assert kw["data"] == b"body"
+            assert method == "GET" and url == "https://example.com/x"
             return Fake()
 
     with patch("app.main.AsyncSession", FakeSession):
-        r = client.post("/fetch", params={"url": "https://example.com/x"}, content=b"body")
+        r = client.get("/fetch", params={"url": "https://example.com/x"})
     assert r.status_code == 201 and r.content == b"hello"
     assert r.headers.get_list("set-cookie") == ["a=1", "b=2"]
     assert "content-encoding" not in r.headers
